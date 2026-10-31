@@ -75,7 +75,7 @@ namespace _2048WinFormsApp
             int indexRow = randomNumberLabel / fieldSize;
             int indexColum = randomNumberLabel % fieldSize;
 
-            List<int> possibleNumbers = new List<int> { 2, 4 };
+            List<int> possibleNumbers = new List<int> { 2, 2, 2, 4 };
             int randomIndex = random.Next(possibleNumbers.Count);
             int randomNumber = possibleNumbers[randomIndex];
 
