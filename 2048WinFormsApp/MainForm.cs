@@ -52,6 +52,7 @@ namespace _2048WinFormsApp
             label.Location = new Point(x, y);
             label.Size = new Size(70, 70);
             label.TextAlign = ContentAlignment.MiddleCenter;
+            label.ForeColor = Color.Green;
             return label;
         }
 
@@ -287,6 +288,7 @@ namespace _2048WinFormsApp
                     }
 
                     GenerateRandomNumber();
+                    UpdateLabelColors();
                     ShowCurrentScore();
                     if (IsGameEnded())
                     {
@@ -298,6 +300,49 @@ namespace _2048WinFormsApp
             }
         }
 
+        private void UpdateLabelColors()
+        {
+            for (int i = 0; i < fieldSize; i++)
+            {
+                for (int j = 0; j < fieldSize; j++)
+                {
+                    if (labelsField[i, j].Text == string.Empty)
+                    {
+                        labelsField[i, j].BackColor = Color.Gray;
+                    }
+                    else
+                    {
+                        int power = CalculatePowerOfTwo(int.Parse(labelsField[i, j].Text));
+                        int[] colorComponents = new int[3] { 255 - 18 * power, 240 - 18 * power, 200 - 18 * power };
+                        for (int k = 0; k < colorComponents.Length; k++)
+                        {
+                            if (colorComponents[k] < 0)
+                            {
+                                colorComponents[k] = 10;
+                            }
+                        }
+                        int r = colorComponents[0];
+                        int g = colorComponents[1];
+                        int b = colorComponents[2];
+                        labelsField[i, j].BackColor = Color.FromArgb(r, g, b);
+                    }
+                }
+            }
+        }
+
+        private int CalculatePowerOfTwo(int number)
+        {
+            int power = 0;
+            for (int i = 1; i < 50; i++)
+            {
+                power = i;
+                if (Math.Pow(2, power) == number)
+                {
+                    break;
+                }
+            }
+            return power;
+        }
         private bool IsGameEnded()
         {
             bool hasAdjacentIdenticalLabels = false;
@@ -394,6 +439,7 @@ namespace _2048WinFormsApp
                 SetWindowSize();
                 InitializeField();
                 GenerateRandomNumber();
+                UpdateLabelColors();
                 ShowCurrentScore();
             }
             else
@@ -412,6 +458,7 @@ namespace _2048WinFormsApp
         {
             ResultsForm resultsForm = new ResultsForm();
             resultsForm.Show();
-        }        
+        }
+
     }
 }
