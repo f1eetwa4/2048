@@ -1,1 +1,2 @@
-# 2048WinFormsApp
+# 2048WinFormsApp  
+Игра работает только на Windows!
