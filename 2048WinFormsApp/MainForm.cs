@@ -7,7 +7,8 @@ namespace _2048WinFormsApp
         private const int fieldSize = 4;
         private Label[,] labelsField;
         private static Random random = new Random();
-        private int score;
+        private bool isGameStarted = false;
+        private User user;
         public MainForm()
         {
             InitializeComponent();
@@ -16,13 +17,12 @@ namespace _2048WinFormsApp
         private void MainForm_Load(object sender, EventArgs e)
         {
             InitializeField();
-            GenerateRandomNumber();
-            ShowCurrentScore();
+            bestScoreLabel.Text = ResultsStorage.FindMaxScore().ToString();
         }
 
         private void ShowCurrentScore()
         {
-            scoreLabel.Text = score.ToString();
+            scoreLabel.Text = user.Score.ToString();
         }
 
         private void InitializeField()
@@ -47,7 +47,7 @@ namespace _2048WinFormsApp
             label.BackColor = SystemColors.ButtonShadow;
             label.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 204);
             int x = 10 + indexColumn * 76;
-            int y = 70 + indexRow * 76;
+            int y = 110 + indexRow * 76;
             label.Location = new Point(x, y);
             label.Size = new Size(70, 70);
             label.TextAlign = ContentAlignment.MiddleCenter;
@@ -68,222 +68,281 @@ namespace _2048WinFormsApp
                     }
                 }
             }
+            if (freeLabels.Count > 0)
+            {
+                int randomIndexLabel = random.Next(freeLabels.Count);
+                int randomNumberLabel = freeLabels[randomIndexLabel];
 
-            int randomIndexLabel = random.Next(freeLabels.Count);
-            int randomNumberLabel = freeLabels[randomIndexLabel];
+                int indexRow = randomNumberLabel / fieldSize;
+                int indexColum = randomNumberLabel % fieldSize;
 
-            int indexRow = randomNumberLabel / fieldSize;
-            int indexColum = randomNumberLabel % fieldSize;
+                List<int> possibleNumbers = new List<int> { 2, 2, 2, 4 };
+                int randomIndex = random.Next(possibleNumbers.Count);
+                int randomNumber = possibleNumbers[randomIndex];
 
-            List<int> possibleNumbers = new List<int> { 2, 2, 2, 4 };
-            int randomIndex = random.Next(possibleNumbers.Count);
-            int randomNumber = possibleNumbers[randomIndex];
-
-            labelsField[indexRow, indexColum].Text = randomNumber.ToString();
+                labelsField[indexRow, indexColum].Text = randomNumber.ToString();
+            }
         }
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            List<Keys> arrowKeys = new List<Keys>() 
-            { Keys.Right, 
-              Keys.Left, 
-              Keys.Up, 
+            List<Keys> arrowKeys = new List<Keys>()
+            { Keys.Right,
+              Keys.Left,
+              Keys.Up,
               Keys.Down
             };
 
             if (arrowKeys.Contains(e.KeyCode))
             {
-                if (e.KeyCode == Keys.Right)
+                if (isGameStarted)
                 {
-                    for (int i = 0; i < fieldSize; i++)
-                    {
-                        for (int j = fieldSize - 1; j >= 0; j--)
-                        {
-                            if (labelsField[i, j].Text != string.Empty)
-                            {
-                                for (int k = j - 1; k >= 0; k--)
-                                {
-                                    if (labelsField[i, k].Text != string.Empty)
-                                    {
-                                        if (labelsField[i, j].Text == labelsField[i, k].Text)
-                                        {
-                                            int number = int.Parse(labelsField[i, j].Text);
-                                            score += number * 2;
-                                            labelsField[i, j].Text = (number * 2).ToString();
-                                            labelsField[i, k].Text = string.Empty;
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < fieldSize; i++)
-                    {
-                        for (int j = fieldSize - 1; j >= 0; j--)
-                        {
-                            if (labelsField[i, j].Text == string.Empty)
-                            {
-                                for (int k = j - 1; k >= 0; k--)
-                                {
-                                    if (labelsField[i, k].Text != string.Empty)
-                                    {
-                                        int number = int.Parse(labelsField[i, k].Text);
-                                        labelsField[i, j].Text = number.ToString();
-                                        labelsField[i, k].Text = string.Empty;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (e.KeyCode == Keys.Left)
-                {
-                    for (int i = 0; i < fieldSize; i++)
-                    {
-                        for (int j = 0; j < fieldSize; j++)
-                        {
-                            if (labelsField[i, j].Text != string.Empty)
-                            {
-                                for (int k = j + 1; k < fieldSize; k++)
-                                {
-                                    if (labelsField[i, k].Text != string.Empty)
-                                    {
-                                        if (labelsField[i, j].Text == labelsField[i, k].Text)
-                                        {
-                                            int number = int.Parse(labelsField[i, j].Text);
-                                            score += number * 2;
-                                            labelsField[i, j].Text = (number * 2).ToString();
-                                            labelsField[i, k].Text = string.Empty;
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < fieldSize; i++)
-                    {
-                        for (int j = 0; j < fieldSize; j++)
-                        {
-                            if (labelsField[i, j].Text == string.Empty)
-                            {
-                                for (int k = j + 1; k < fieldSize; k++)
-                                {
-                                    if (labelsField[i, k].Text != string.Empty)
-                                    {
-                                        int number = int.Parse(labelsField[i, k].Text);
-                                        labelsField[i, j].Text = number.ToString();
-                                        labelsField[i, k].Text = string.Empty;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (e.KeyCode == Keys.Up)
-                {
-                    for (int j = 0; j < fieldSize; j++)
+                    if (e.KeyCode == Keys.Right)
                     {
                         for (int i = 0; i < fieldSize; i++)
                         {
-                            if (labelsField[i, j].Text != string.Empty)
+                            for (int j = fieldSize - 1; j >= 0; j--)
                             {
-                                for (int k = i + 1; k < fieldSize; k++)
+                                if (labelsField[i, j].Text != string.Empty)
                                 {
-                                    if (labelsField[k, j].Text != string.Empty)
+                                    for (int k = j - 1; k >= 0; k--)
                                     {
-                                        if (labelsField[i, j].Text == labelsField[k, j].Text)
+                                        if (labelsField[i, k].Text != string.Empty)
                                         {
-                                            int number = int.Parse(labelsField[i, j].Text);
-                                            score += number * 2;
-                                            labelsField[i, j].Text = (number * 2).ToString();
-                                            labelsField[k, j].Text = string.Empty;
+                                            if (labelsField[i, j].Text == labelsField[i, k].Text)
+                                            {
+                                                int number = int.Parse(labelsField[i, j].Text);
+                                                user.IncreaseUserScore(number * 2);
+                                                labelsField[i, j].Text = (number * 2).ToString();
+                                                labelsField[i, k].Text = string.Empty;
+                                            }
+                                            break;
                                         }
-                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        for (int i = 0; i < fieldSize; i++)
+                        {
+                            for (int j = fieldSize - 1; j >= 0; j--)
+                            {
+                                if (labelsField[i, j].Text == string.Empty)
+                                {
+                                    for (int k = j - 1; k >= 0; k--)
+                                    {
+                                        if (labelsField[i, k].Text != string.Empty)
+                                        {
+                                            int number = int.Parse(labelsField[i, k].Text);
+                                            labelsField[i, j].Text = number.ToString();
+                                            labelsField[i, k].Text = string.Empty;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    for (int j = 0; j < fieldSize; j++)
+                    if (e.KeyCode == Keys.Left)
                     {
                         for (int i = 0; i < fieldSize; i++)
                         {
-                            if (labelsField[i, j].Text == string.Empty)
+                            for (int j = 0; j < fieldSize; j++)
                             {
-                                for (int k = i + 1; k < fieldSize; k++)
+                                if (labelsField[i, j].Text != string.Empty)
                                 {
-                                    if (labelsField[k, j].Text != string.Empty)
+                                    for (int k = j + 1; k < fieldSize; k++)
                                     {
-                                        int number = int.Parse(labelsField[k, j].Text);
-                                        labelsField[i, j].Text = number.ToString();
-                                        labelsField[k, j].Text = string.Empty;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (e.KeyCode == Keys.Down)
-                {
-                    for (int j = 0; j < fieldSize; j++)
-                    {
-                        for (int i = fieldSize - 1; i >= 0; i--)
-                        {
-                            if (labelsField[i, j].Text != string.Empty)
-                            {
-                                for (int k = i - 1; k >= 0; k--)
-                                {
-                                    if (labelsField[k, j].Text != string.Empty)
-                                    {
-                                        if (labelsField[i, j].Text == labelsField[k, j].Text)
+                                        if (labelsField[i, k].Text != string.Empty)
                                         {
-                                            int number = int.Parse(labelsField[i, j].Text);
-                                            score += number * 2;
-                                            labelsField[i, j].Text = (number * 2).ToString();
-                                            labelsField[k, j].Text = string.Empty;
+                                            if (labelsField[i, j].Text == labelsField[i, k].Text)
+                                            {
+                                                int number = int.Parse(labelsField[i, j].Text);
+                                                user.IncreaseUserScore(number * 2);
+                                                labelsField[i, j].Text = (number * 2).ToString();
+                                                labelsField[i, k].Text = string.Empty;
+                                            }
+                                            break;
                                         }
-                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        for (int i = 0; i < fieldSize; i++)
+                        {
+                            for (int j = 0; j < fieldSize; j++)
+                            {
+                                if (labelsField[i, j].Text == string.Empty)
+                                {
+                                    for (int k = j + 1; k < fieldSize; k++)
+                                    {
+                                        if (labelsField[i, k].Text != string.Empty)
+                                        {
+                                            int number = int.Parse(labelsField[i, k].Text);
+                                            labelsField[i, j].Text = number.ToString();
+                                            labelsField[i, k].Text = string.Empty;
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    for (int j = 0; j < fieldSize; j++)
+                    if (e.KeyCode == Keys.Up)
                     {
-                        for (int i = fieldSize - 1; i >= 0; i--)
+                        for (int j = 0; j < fieldSize; j++)
                         {
-                            if (labelsField[i, j].Text == string.Empty)
+                            for (int i = 0; i < fieldSize; i++)
                             {
-                                for (int k = i - 1; k >= 0; k--)
+                                if (labelsField[i, j].Text != string.Empty)
                                 {
-                                    if (labelsField[k, j].Text != string.Empty)
+                                    for (int k = i + 1; k < fieldSize; k++)
                                     {
-                                        int number = int.Parse(labelsField[k, j].Text);
-                                        labelsField[i, j].Text = number.ToString();
-                                        labelsField[k, j].Text = string.Empty;
-                                        break;
+                                        if (labelsField[k, j].Text != string.Empty)
+                                        {
+                                            if (labelsField[i, j].Text == labelsField[k, j].Text)
+                                            {
+                                                int number = int.Parse(labelsField[i, j].Text);
+                                                user.IncreaseUserScore(number * 2);
+                                                labelsField[i, j].Text = (number * 2).ToString();
+                                                labelsField[k, j].Text = string.Empty;
+                                            }
+                                            break;
+                                        }
                                     }
                                 }
                             }
                         }
+
+                        for (int j = 0; j < fieldSize; j++)
+                        {
+                            for (int i = 0; i < fieldSize; i++)
+                            {
+                                if (labelsField[i, j].Text == string.Empty)
+                                {
+                                    for (int k = i + 1; k < fieldSize; k++)
+                                    {
+                                        if (labelsField[k, j].Text != string.Empty)
+                                        {
+                                            int number = int.Parse(labelsField[k, j].Text);
+                                            labelsField[i, j].Text = number.ToString();
+                                            labelsField[k, j].Text = string.Empty;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (e.KeyCode == Keys.Down)
+                    {
+                        for (int j = 0; j < fieldSize; j++)
+                        {
+                            for (int i = fieldSize - 1; i >= 0; i--)
+                            {
+                                if (labelsField[i, j].Text != string.Empty)
+                                {
+                                    for (int k = i - 1; k >= 0; k--)
+                                    {
+                                        if (labelsField[k, j].Text != string.Empty)
+                                        {
+                                            if (labelsField[i, j].Text == labelsField[k, j].Text)
+                                            {
+                                                int number = int.Parse(labelsField[i, j].Text);
+                                                user.IncreaseUserScore(number * 2);
+                                                labelsField[i, j].Text = (number * 2).ToString();
+                                                labelsField[k, j].Text = string.Empty;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        for (int j = 0; j < fieldSize; j++)
+                        {
+                            for (int i = fieldSize - 1; i >= 0; i--)
+                            {
+                                if (labelsField[i, j].Text == string.Empty)
+                                {
+                                    for (int k = i - 1; k >= 0; k--)
+                                    {
+                                        if (labelsField[k, j].Text != string.Empty)
+                                        {
+                                            int number = int.Parse(labelsField[k, j].Text);
+                                            labelsField[i, j].Text = number.ToString();
+                                            labelsField[k, j].Text = string.Empty;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    GenerateRandomNumber();
+                    ShowCurrentScore();
+                    if (IsGameEnded())
+                    {
+                        ResultsStorage.AddResult(user);
+                        MessageBox.Show("Игра окончена!");
+                        Application.Restart();
                     }
                 }
-
-                GenerateRandomNumber();
-                ShowCurrentScore();
             }
+        }
+
+        private bool IsGameEnded()
+        {
+            bool hasAdjacentIdenticalLabels = false;
+
+            List<int> freeLabels = new List<int>();
+            for (int i = 0; i < fieldSize; i++)
+            {
+                for (int j = 0; j < fieldSize; j++)
+                {
+                    if (labelsField[i, j].Text == "")
+                    {
+                        int numberLabel = i * fieldSize + j;
+                        freeLabels.Add(numberLabel);
+                    }
+                }
+            }
+
+            for (int i = 0; i < fieldSize; i++)
+            {
+                for (int j = 0; j < fieldSize - 1; j++)
+                {
+                    if (labelsField[i, j].Text == labelsField[i, j + 1].Text)
+                    {
+                        hasAdjacentIdenticalLabels = true;
+                        break;
+                    }
+                }
+            }
+
+            for (int j = 0; j < fieldSize; j++)
+            {
+                for (int i = 0; i < fieldSize - 1; i++)
+                {
+                    if (labelsField[i, j].Text == labelsField[i + 1, j].Text)
+                    {
+                        hasAdjacentIdenticalLabels = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasAdjacentIdenticalLabels == false && freeLabels.Count == 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         private void restartMenuItem_Click(object sender, EventArgs e)
@@ -308,5 +367,41 @@ namespace _2048WinFormsApp
                 "7) Игра заканчивается, когда на поле нет свободных клеток и ни одного возможного слияния.";
             MessageBox.Show(rules, "Правила игры 2048");
         }
+
+
+
+        private bool IsCorrectInput(string text)
+        {
+            return !string.IsNullOrWhiteSpace(text);
+        }
+
+        private void buttonStartGame_Click(object sender, EventArgs e)
+        {
+            if (IsCorrectInput(textBoxUserName.Text))
+            {
+                string name = textBoxUserName.Text;
+                user = new User(name, 0);
+
+                buttonStartGame.Visible = false;
+                textBoxUserName.Visible = false;
+                userNameLabel.Visible = false;
+                isGameStarted = true;
+                GenerateRandomNumber();
+                ShowCurrentScore();
+            }
+            else
+            {
+                MessageBox.Show("Пожалуйста, введите ваше ФИО");
+                return;
+            }
+        }
+
+        private void historyGameMenuItem_Click(object sender, EventArgs e)
+        {
+            ResultsForm resultsForm = new ResultsForm();
+            resultsForm.Show();
+        }
+
+        
     }
 }
