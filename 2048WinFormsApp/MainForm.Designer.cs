@@ -30,12 +30,18 @@
         {
             label1 = new Label();
             scoreLabel = new Label();
+            menuStrip1 = new MenuStrip();
+            менюToolStripMenuItem = new ToolStripMenuItem();
+            restartMenuItem = new ToolStripMenuItem();
+            exitMenuItem = new ToolStripMenuItem();
+            rulesMenuItem = new ToolStripMenuItem();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(8, 12);
+            label1.Location = new Point(12, 43);
             label1.Name = "label1";
             label1.Size = new Size(36, 15);
             label1.TabIndex = 0;
@@ -44,11 +50,48 @@
             // scoreLabel
             // 
             scoreLabel.AutoSize = true;
-            scoreLabel.Location = new Point(50, 12);
+            scoreLabel.Location = new Point(54, 43);
             scoreLabel.Name = "scoreLabel";
             scoreLabel.Size = new Size(13, 15);
             scoreLabel.TabIndex = 1;
             scoreLabel.Text = "0";
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new ToolStripItem[] { менюToolStripMenuItem });
+            menuStrip1.Location = new Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(322, 24);
+            menuStrip1.TabIndex = 2;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // менюToolStripMenuItem
+            // 
+            менюToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { restartMenuItem, exitMenuItem, rulesMenuItem });
+            менюToolStripMenuItem.Name = "менюToolStripMenuItem";
+            менюToolStripMenuItem.Size = new Size(53, 20);
+            менюToolStripMenuItem.Text = "Меню";
+            // 
+            // restartMenuItem
+            // 
+            restartMenuItem.Name = "restartMenuItem";
+            restartMenuItem.Size = new Size(180, 22);
+            restartMenuItem.Text = "Перезапуск";
+            restartMenuItem.Click += restartMenuItem_Click;
+            // 
+            // exitMenuItem
+            // 
+            exitMenuItem.Name = "exitMenuItem";
+            exitMenuItem.Size = new Size(180, 22);
+            exitMenuItem.Text = "Выход";
+            exitMenuItem.Click += exitMenuItem_Click;
+            // 
+            // rulesMenuItem
+            // 
+            rulesMenuItem.Name = "rulesMenuItem";
+            rulesMenuItem.Size = new Size(180, 22);
+            rulesMenuItem.Text = "Правила игры";
+            rulesMenuItem.Click += rulesMenuItem_Click;
             // 
             // MainForm
             // 
@@ -57,10 +100,14 @@
             ClientSize = new Size(322, 417);
             Controls.Add(scoreLabel);
             Controls.Add(label1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
             Name = "MainForm";
             Text = "2048";
             Load += MainForm_Load;
             KeyDown += MainForm_KeyDown;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -69,5 +116,10 @@
 
         private Label label1;
         private Label scoreLabel;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem менюToolStripMenuItem;
+        private ToolStripMenuItem restartMenuItem;
+        private ToolStripMenuItem exitMenuItem;
+        private ToolStripMenuItem rulesMenuItem;
     }
 }
