@@ -41,7 +41,10 @@
             buttonStartGame = new Button();
             bestScoreTitleLabel = new Label();
             bestScoreLabel = new Label();
+            fieldSizeNumericUpDown = new NumericUpDown();
+            fieldSizeTitleLabel = new Label();
             menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)fieldSizeNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -109,15 +112,15 @@
             // userNameLabel
             // 
             userNameLabel.AutoSize = true;
-            userNameLabel.Location = new Point(12, 39);
+            userNameLabel.Location = new Point(12, 55);
             userNameLabel.Name = "userNameLabel";
-            userNameLabel.Size = new Size(232, 15);
+            userNameLabel.Size = new Size(112, 15);
             userNameLabel.TabIndex = 3;
-            userNameLabel.Text = "Введите ваше ФИО и нажмите на кнопку";
+            userNameLabel.Text = "Введите ваше ФИО";
             // 
             // textBoxUserName
             // 
-            textBoxUserName.Location = new Point(12, 57);
+            textBoxUserName.Location = new Point(12, 73);
             textBoxUserName.Name = "textBoxUserName";
             textBoxUserName.Size = new Size(298, 23);
             textBoxUserName.TabIndex = 4;
@@ -125,9 +128,9 @@
             // buttonStartGame
             // 
             buttonStartGame.BackColor = Color.Lime;
-            buttonStartGame.Location = new Point(112, 86);
+            buttonStartGame.Location = new Point(106, 126);
             buttonStartGame.Name = "buttonStartGame";
-            buttonStartGame.Size = new Size(98, 23);
+            buttonStartGame.Size = new Size(109, 39);
             buttonStartGame.TabIndex = 5;
             buttonStartGame.Text = "Начать игру";
             buttonStartGame.UseVisualStyleBackColor = false;
@@ -151,11 +154,32 @@
             bestScoreLabel.TabIndex = 7;
             bestScoreLabel.Text = "0";
             // 
+            // fieldSizeNumericUpDown
+            // 
+            fieldSizeNumericUpDown.Location = new Point(141, 97);
+            fieldSizeNumericUpDown.Maximum = new decimal(new int[] { 10, 0, 0, 0 });
+            fieldSizeNumericUpDown.Minimum = new decimal(new int[] { 4, 0, 0, 0 });
+            fieldSizeNumericUpDown.Name = "fieldSizeNumericUpDown";
+            fieldSizeNumericUpDown.Size = new Size(36, 23);
+            fieldSizeNumericUpDown.TabIndex = 8;
+            fieldSizeNumericUpDown.Value = new decimal(new int[] { 4, 0, 0, 0 });
+            // 
+            // fieldSizeTitleLabel
+            // 
+            fieldSizeTitleLabel.AutoSize = true;
+            fieldSizeTitleLabel.Location = new Point(12, 99);
+            fieldSizeTitleLabel.Name = "fieldSizeTitleLabel";
+            fieldSizeTitleLabel.Size = new Size(123, 15);
+            fieldSizeTitleLabel.TabIndex = 9;
+            fieldSizeTitleLabel.Text = "Введите размер поля";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(322, 417);
+            ClientSize = new Size(322, 513);
+            Controls.Add(fieldSizeTitleLabel);
+            Controls.Add(fieldSizeNumericUpDown);
             Controls.Add(bestScoreLabel);
             Controls.Add(bestScoreTitleLabel);
             Controls.Add(buttonStartGame);
@@ -172,6 +196,7 @@
             KeyDown += MainForm_KeyDown;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)fieldSizeNumericUpDown).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -191,5 +216,7 @@
         private ToolStripMenuItem historyGameMenuItem;
         private Label bestScoreTitleLabel;
         private Label bestScoreLabel;
+        private NumericUpDown fieldSizeNumericUpDown;
+        private Label fieldSizeTitleLabel;
     }
 }

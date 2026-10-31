@@ -4,8 +4,10 @@ namespace _2048WinFormsApp
 {
     public partial class MainForm : Form
     {
-        private const int fieldSize = 4;
+        private int fieldSize;
         private Label[,] labelsField;
+        private const int offsetY = 150;
+        private const int offsetX = 10;
         private static Random random = new Random();
         private bool isGameStarted = false;
         private User user;
@@ -16,7 +18,6 @@ namespace _2048WinFormsApp
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            InitializeField();
             bestScoreLabel.Text = ResultsStorage.FindMaxScore().ToString();
         }
 
@@ -46,8 +47,8 @@ namespace _2048WinFormsApp
 
             label.BackColor = SystemColors.ButtonShadow;
             label.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 204);
-            int x = 10 + indexColumn * 76;
-            int y = 110 + indexRow * 76;
+            int x = offsetX + indexColumn * 76;
+            int y = offsetY + indexRow * 76;
             label.Location = new Point(x, y);
             label.Size = new Size(70, 70);
             label.TextAlign = ContentAlignment.MiddleCenter;
@@ -386,6 +387,12 @@ namespace _2048WinFormsApp
                 textBoxUserName.Visible = false;
                 userNameLabel.Visible = false;
                 isGameStarted = true;
+                fieldSize = (int)fieldSizeNumericUpDown.Value;
+                fieldSizeNumericUpDown.Visible = false;
+                fieldSizeTitleLabel.Visible = false;
+
+                SetWindowSize();
+                InitializeField();
                 GenerateRandomNumber();
                 ShowCurrentScore();
             }
@@ -396,12 +403,15 @@ namespace _2048WinFormsApp
             }
         }
 
+        private void SetWindowSize()
+        {
+            this.ClientSize = new Size(fieldSize * 76 + 14, offsetY + fieldSize * 76 + 4);
+        }
+
         private void historyGameMenuItem_Click(object sender, EventArgs e)
         {
             ResultsForm resultsForm = new ResultsForm();
             resultsForm.Show();
-        }
-
-        
+        }        
     }
 }
